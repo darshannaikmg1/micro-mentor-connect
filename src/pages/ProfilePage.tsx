@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,44 +11,141 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProfilePage = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUserProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [bio, setBio] = useState("");
+  const [bio, setBio] = useState(user?.bio || "");
   const [profileImage, setProfileImage] = useState(user?.image || "");
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Load profile data from Supabase if user exists
+    const fetchProfileData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching profile:', error);
+          return;
+        }
+
+        if (data) {
+          setName(data.full_name || user.name || "");
+          setBio(data.bio || "");
+          setProfileImage(user.image || ""); // Keep this from user context or update if needed
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, [user, navigate]);
 
   if (!user) {
-    navigate("/login");
     return null;
   }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setProfileImage(e.target.result.toString());
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    try {
+      setIsLoading(true);
+
+      // Upload image to Supabase storage
+      const fileName = `${user.id}-${Date.now()}`;
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${fileName}.${fileExt}`;
+
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (error) {
+        throw error;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const imageUrl = urlData.publicUrl;
+      setProfileImage(imageUrl);
+
+      toast({
+        title: "Image uploaded",
+        description: "Your profile image has been updated.",
+      });
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload image.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would update the user profile in Supabase
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated.",
-    });
-    setIsEditing(false);
+    setIsLoading(true);
+
+    try {
+      // Update profile in Supabase
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: name,
+          bio: bio,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'id' });
+
+      if (error) throw error;
+
+      // Update local user state
+      updateUserProfile({
+        ...user,
+        name: name,
+        bio: bio,
+        image: profileImage,
+      });
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
+      });
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Update failed",
+        description: error.message || "Failed to update profile.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -86,6 +183,7 @@ const ProfilePage = () => {
                           accept="image/*"
                           className="hidden"
                           onChange={handleImageUpload}
+                          disabled={isLoading}
                         />
                       </div>
                     )}
@@ -101,7 +199,7 @@ const ProfilePage = () => {
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      disabled={!isEditing}
+                      disabled={!isEditing || isLoading}
                       className={!isEditing ? "bg-gray-50" : ""}
                     />
                   </div>
@@ -113,8 +211,8 @@ const ProfilePage = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      disabled={!isEditing}
-                      className={!isEditing ? "bg-gray-50" : ""}
+                      disabled={true} // Email should not be editable
+                      className="bg-gray-50"
                     />
                   </div>
 
@@ -124,7 +222,7 @@ const ProfilePage = () => {
                       id="bio"
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
-                      disabled={!isEditing}
+                      disabled={!isEditing || isLoading}
                       className={!isEditing ? "bg-gray-50" : ""}
                       placeholder="Tell us about yourself"
                       rows={4}
@@ -133,10 +231,19 @@ const ProfilePage = () => {
 
                   {isEditing && (
                     <div className="flex justify-end space-x-3">
-                      <Button variant="outline" onClick={() => setIsEditing(false)}>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setIsEditing(false)}
+                        disabled={isLoading}
+                      >
                         Cancel
                       </Button>
-                      <Button type="submit">Save Changes</Button>
+                      <Button 
+                        type="submit"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Saving..." : "Save Changes"}
+                      </Button>
                     </div>
                   )}
                 </div>

@@ -1,142 +1,154 @@
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
-const SubscriptionPlans = () => {
+interface SubscriptionPlansProps {
+  onSubscribe?: (planName: string) => void;
+  selectedPlan?: string | null;
+}
+
+const SubscriptionPlans = ({ onSubscribe, selectedPlan }: SubscriptionPlansProps) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
   const plans = [
     {
       name: "Free",
       price: 0,
-      period: "forever",
-      description: "Access limited free mentorship videos",
+      description: "Basic access to the platform",
       features: [
-        "Browse mentor profiles",
-        "Watch 5 free mentorship videos",
+        "Access to public mentor profiles",
         "Community forum access",
-        "Email support",
+        "1 mentoring session per month",
+        "Basic resources library",
       ],
-      highlighted: false,
-      buttonText: "Get Started",
-      gradient: "from-blue-50 to-blue-100",
-      hoverGradient: "hover:from-blue-100 hover:to-blue-200",
+      limitations: [
+        "Limited mentor selection",
+        "No group sessions",
+        "No premium content access",
+      ],
+      popular: false,
     },
     {
       name: "Silver",
-      price: 9.99,
-      period: "month",
-      description: "Access all mentorship videos + 2 mentor sessions/month (recorded)",
+      price: 29,
+      description: "Great for occasional guidance",
       features: [
-        "All Free features",
-        "Unlimited mentorship videos",
-        "2 recorded mentor sessions/month",
-        "Resource downloads",
-        "Priority email support",
+        "Everything in Free",
+        "3 mentoring sessions per month",
+        "Message mentors directly",
+        "Access to recorded sessions",
+        "Priority support",
       ],
-      highlighted: false,
-      buttonText: "Subscribe",
-      gradient: "from-gray-50 to-gray-100",
-      hoverGradient: "hover:from-gray-100 hover:to-gray-200",
+      limitations: [],
+      popular: true,
     },
     {
       name: "Gold",
-      price: 19.99,
-      period: "month",
-      description: "All Silver features + 2 live mentor sessions/month",
+      price: 79,
+      description: "Ideal for active learners",
       features: [
-        "All Silver features",
-        "2 live mentor sessions/month",
-        "Mentor messaging",
-        "Session notes & summaries",
-        "24/7 support",
+        "Everything in Silver",
+        "10 mentoring sessions per month",
+        "Access to all premium content",
+        "Group session participation",
+        "Personalized growth plan",
+        "Progress tracking",
       ],
-      highlighted: true,
-      buttonText: "Subscribe",
-      gradient: "from-amber-50 to-amber-200",
-      hoverGradient: "hover:from-amber-100 hover:to-amber-300",
-    },
-    {
-      name: "Platinum",
-      price: 39.99,
-      period: "month",
-      description: "All-access pass with premium benefits",
-      features: [
-        "All Gold features",
-        "5 live sessions/month",
-        "Unlimited recorded sessions",
-        "Priority booking with top mentors",
-        "1-on-1 career planning",
-        "VIP support",
-      ],
-      highlighted: false,
-      buttonText: "Subscribe",
-      gradient: "from-purple-50 to-purple-100",
-      hoverGradient: "hover:from-purple-100 hover:to-purple-200",
+      limitations: [],
+      popular: false,
     },
   ];
 
-  return (
-    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Growth Path</h2>
-          <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
-          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
-            Select the perfect plan to accelerate your career with personalized mentorship
-          </p>
-        </div>
+  const handleGetStarted = (planName: string, price: number) => {
+    if (onSubscribe) {
+      onSubscribe(planName);
+      return;
+    }
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "Please login to subscribe to a plan",
+      });
+      navigate("/login?redirect=/pricing");
+      return;
+    }
+    
+    // In a real implementation, this would navigate to a payment page
+    toast({
+      title: "Subscription",
+      description: `You've selected the ${planName} plan. In a real implementation, this would open a payment page.`,
+    });
+  };
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+  return (
+    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8">
           {plans.map((plan) => (
-            <Card 
-              key={plan.name} 
-              className={`flex flex-col transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2 bg-gradient-to-br ${plan.gradient} ${plan.hoverGradient} ${
-                plan.highlighted 
-                  ? "border-primary ring-2 ring-primary ring-opacity-50 shadow-lg scale-105" 
-                  : "border-transparent"
-              }`}
+            <div
+              key={plan.name}
+              className={`rounded-xl overflow-hidden transition-all duration-300 ${
+                selectedPlan === plan.name
+                  ? "ring-2 ring-primary shadow-xl transform scale-105"
+                  : "border shadow-sm hover:shadow-md"
+              } ${plan.popular ? "relative" : ""}`}
             >
-              {plan.highlighted && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
+              {plan.popular && (
+                <div className="absolute top-0 right-0">
+                  <div className="bg-primary text-white text-xs font-semibold px-4 py-1 rounded-bl-xl">
+                    Most Popular
+                  </div>
                 </div>
               )}
-              <CardHeader>
-                <CardTitle className="text-center">
-                  <h3 className="text-2xl font-bold">{plan.name}</h3>
-                  <div className="mt-4 flex items-center justify-center">
-                    <span className="text-4xl font-bold">${plan.price}</span>
-                    <span className="text-gray-600 ml-2">/{plan.period}</span>
-                  </div>
-                </CardTitle>
-                <p className="text-sm text-center text-gray-600 mt-4 px-4">
-                  {plan.description}
-                </p>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <ul className="space-y-4">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center mr-3 mt-0.5">
-                        <Check className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <span className="text-sm text-gray-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter className="pt-4 pb-8">
-                <Button 
-                  className={`w-full shadow-md transition-all ${
-                    plan.highlighted 
-                      ? "bg-primary hover:bg-primary/90 shadow-button" 
-                      : "bg-primary/90 hover:bg-primary"
+
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                <div className="mb-4">
+                  <span className="text-3xl font-bold">${plan.price}</span>
+                  <span className="text-gray-500">/month</span>
+                </div>
+                <p className="text-gray-600 mb-6">{plan.description}</p>
+
+                <Button
+                  className={`w-full mb-6 ${
+                    selectedPlan === plan.name ? "bg-primary" : ""
                   }`}
+                  onClick={() => handleGetStarted(plan.name, plan.price)}
                 >
-                  {plan.buttonText}
+                  {plan.price === 0 ? "Get Started" : "Subscribe"}
                 </Button>
-              </CardFooter>
-            </Card>
+
+                <div className="space-y-3">
+                  <p className="font-medium">What's included:</p>
+                  {plan.features.map((feature, index) => (
+                    <div key={index} className="flex items-start">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="ml-3 text-gray-600 text-sm">{feature}</span>
+                    </div>
+                  ))}
+
+                  {plan.limitations.length > 0 && (
+                    <>
+                      <p className="font-medium mt-4">Limitations:</p>
+                      <ul className="space-y-1">
+                        {plan.limitations.map((limitation, index) => (
+                          <li key={index} className="text-sm text-gray-500 flex items-center">
+                            <span className="mr-2">•</span>
+                            {limitation}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>

@@ -1,11 +1,21 @@
 
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SubscriptionPlans from "@/components/SubscriptionPlans";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import ContactSalesForm from "@/components/ContactSalesForm";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const PricingPage = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
   const features = [
     {
       title: "Mentorship Sessions",
@@ -33,6 +43,25 @@ const PricingPage = () => {
     },
   ];
 
+  const handleSubscribe = (planName: string) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "Please login to subscribe to a plan",
+      });
+      navigate("/login?redirect=/pricing");
+      return;
+    }
+    
+    setSelectedPlan(planName);
+    
+    // In a real implementation, this would navigate to a payment page
+    toast({
+      title: "Subscription",
+      description: `You've selected the ${planName} plan. In a real implementation, this would open a payment page.`,
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -46,7 +75,10 @@ const PricingPage = () => {
           </div>
         </div>
         
-        <SubscriptionPlans />
+        <SubscriptionPlans 
+          onSubscribe={handleSubscribe}
+          selectedPlan={selectedPlan}
+        />
         
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,7 +91,7 @@ const PricingPage = () => {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-gray-50 p-6 rounded-lg transform hover:-translate-y-1 transition-transform duration-300">
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
                       <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -84,7 +116,7 @@ const PricingPage = () => {
                     We offer custom enterprise plans tailored to your company's needs.
                   </p>
                   <div className="mt-6">
-                    <Button size="lg">Contact Sales</Button>
+                    <ContactSalesForm />
                   </div>
                 </div>
                 <div className="mt-8 lg:mt-0">
