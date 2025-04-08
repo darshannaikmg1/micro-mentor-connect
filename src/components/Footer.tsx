@@ -16,19 +16,19 @@ const Footer = () => {
               Grow your skills, advance your career, or solve specific challenges.
             </p>
             <div className="mt-6 flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
                 <span className="sr-only">Facebook</span>
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
                 <span className="sr-only">Twitter</span>
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
                 <span className="sr-only">Instagram</span>
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary">
+              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin size={20} />
               </a>

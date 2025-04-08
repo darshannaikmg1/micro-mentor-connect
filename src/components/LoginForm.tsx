@@ -7,11 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
+import { AlertCircle } from "lucide-react";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,24 +23,36 @@ const LoginForm = () => {
   const queryParams = new URLSearchParams(location.search);
   const redirectTo = queryParams.get("redirect") || "/dashboard";
 
+  const validateForm = () => {
+    if (!email.trim()) {
+      setErrorMessage("Email is required");
+      return false;
+    }
+    
+    if (!password.trim()) {
+      setErrorMessage("Password is required");
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
       await login(email, password);
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
-      });
       navigate(redirectTo);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast({
-        title: "Login failed",
-        description: "Please check your email and password",
-        variant: "destructive",
-      });
+      setErrorMessage(error.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -52,6 +66,13 @@ const LoginForm = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {errorMessage && (
+          <div className="bg-red-50 text-red-500 p-3 rounded-md flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <p className="text-sm">{errorMessage}</p>
+          </div>
+        )}
+        
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

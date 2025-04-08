@@ -13,6 +13,12 @@ import PricingPage from "./pages/PricingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import BecomeMentorPage from "./pages/BecomeMentorPage";
+import ProfilePage from "./pages/ProfilePage";
+import DashboardPage from "./pages/DashboardPage";
+import AboutPage from "./pages/AboutPage";
+import BlogPage from "./pages/BlogPage";
+import ContactPage from "./pages/ContactPage";
+import FAQPage from "./pages/FAQPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +39,12 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/become-mentor" element={<BecomeMentorPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,6 +36,28 @@ const MentorFilter = ({ onFilter }: MentorFilterProps) => {
   });
   const [priceRange, setPriceRange] = useState([0, 150]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsFilterOpen(true);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Apply filters whenever they change
+    applyFilters();
+  }, [searchQuery, selectedExpertise, sessionTypes, priceRange]);
 
   const handleExpertiseChange = (expertise: string) => {
     setSelectedExpertise((prev) =>
@@ -67,9 +89,6 @@ const MentorFilter = ({ onFilter }: MentorFilterProps) => {
       priceRange,
     };
     onFilter(filters);
-    if (window.innerWidth < 768) {
-      setIsFilterOpen(false);
-    }
   };
 
   const removeExpertiseTag = (expertise: string) => {
@@ -97,9 +116,6 @@ const MentorFilter = ({ onFilter }: MentorFilterProps) => {
             <Filter className="h-4 w-4" />
             Filters
           </Button>
-        </div>
-        <div className="hidden md:block">
-          <Button onClick={applyFilters}>Search</Button>
         </div>
       </div>
 
@@ -130,7 +146,7 @@ const MentorFilter = ({ onFilter }: MentorFilterProps) => {
       )}
 
       {/* Filter options */}
-      <div className={`mt-4 ${isFilterOpen || window.innerWidth >= 768 ? "block" : "hidden"}`}>
+      <div className={`mt-4 ${isFilterOpen ? "block" : "hidden"}`}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Expertise */}
           <div>

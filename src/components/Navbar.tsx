@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,10 +16,20 @@ import {
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
+  const location = useLocation();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <nav className="bg-white shadow-sm">
@@ -34,25 +44,41 @@ const Navbar = () => {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
                 to="/"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-transparent hover:border-primary"
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                  isActive('/') 
+                    ? 'text-gray-900 border-b-2 border-primary' 
+                    : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary'
+                }`}
               >
                 Home
               </Link>
               <Link
                 to="/mentors"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary"
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                  isActive('/mentors') 
+                    ? 'text-gray-900 border-b-2 border-primary' 
+                    : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary'
+                }`}
               >
                 Find Mentors
               </Link>
               <Link
                 to="/how-it-works"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary"
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                  isActive('/how-it-works') 
+                    ? 'text-gray-900 border-b-2 border-primary' 
+                    : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary'
+                }`}
               >
                 How It Works
               </Link>
               <Link
                 to="/pricing"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary"
+                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                  isActive('/pricing') 
+                    ? 'text-gray-900 border-b-2 border-primary' 
+                    : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-primary'
+                }`}
               >
                 Pricing
               </Link>
@@ -62,7 +88,12 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 <Link to="/dashboard">
-                  <Button variant="ghost">Dashboard</Button>
+                  <Button 
+                    variant={isActive('/dashboard') ? "default" : "ghost"} 
+                    className={isActive('/dashboard') ? "" : ""}
+                  >
+                    Dashboard
+                  </Button>
                 </Link>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -119,28 +150,44 @@ const Navbar = () => {
           <div className="pt-2 pb-3 space-y-1">
             <Link
               to="/"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+              className={`block pl-3 pr-4 py-2 text-base font-medium ${
+                isActive('/') 
+                  ? 'text-primary bg-primary/10' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
+              }`}
               onClick={toggleMobileMenu}
             >
               Home
             </Link>
             <Link
               to="/mentors"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+              className={`block pl-3 pr-4 py-2 text-base font-medium ${
+                isActive('/mentors') 
+                  ? 'text-primary bg-primary/10' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
+              }`}
               onClick={toggleMobileMenu}
             >
               Find Mentors
             </Link>
             <Link
               to="/how-it-works"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+              className={`block pl-3 pr-4 py-2 text-base font-medium ${
+                isActive('/how-it-works') 
+                  ? 'text-primary bg-primary/10' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
+              }`}
               onClick={toggleMobileMenu}
             >
               How It Works
             </Link>
             <Link
               to="/pricing"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-primary"
+              className={`block pl-3 pr-4 py-2 text-base font-medium ${
+                isActive('/pricing') 
+                  ? 'text-primary bg-primary/10' 
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
+              }`}
               onClick={toggleMobileMenu}
             >
               Pricing
@@ -164,14 +211,22 @@ const Navbar = () => {
                 <div className="mt-3 space-y-1">
                   <Link
                     to="/dashboard"
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                    className={`block px-4 py-2 text-base font-medium ${
+                      isActive('/dashboard') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
                     onClick={toggleMobileMenu}
                   >
                     Dashboard
                   </Link>
                   <Link
                     to="/profile"
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                    className={`block px-4 py-2 text-base font-medium ${
+                      isActive('/profile') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
                     onClick={toggleMobileMenu}
                   >
                     Profile
