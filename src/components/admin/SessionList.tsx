@@ -16,10 +16,10 @@ interface SessionListProps {
 
 const SessionList = ({ sessions, isLoading }: SessionListProps) => {
   return (
-    <Card className="bg-gray-900 border-gray-800 text-white">
+    <Card className="border border-gray-200 shadow-sm">
       <CardHeader>
         <CardTitle>Recent Sessions</CardTitle>
-        <CardDescription className="text-gray-400">Monitor recent mentorship sessions</CardDescription>
+        <CardDescription>Monitor recent mentorship sessions</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -33,7 +33,7 @@ const SessionList = ({ sessions, isLoading }: SessionListProps) => {
             ))}
           </div>
         ) : (
-          <p className="text-center py-8 text-gray-400">No recent sessions found</p>
+          <p className="text-center py-8 text-gray-500">No recent sessions found</p>
         )}
       </CardContent>
     </Card>

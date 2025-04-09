@@ -5,12 +5,12 @@ import ActivityLog from "./ActivityLog";
 
 const ActivityLogCard = () => {
   return (
-    <Card className="bg-gray-900 border-gray-800 text-white">
+    <Card className="border border-gray-200 shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <Activity className="mr-2 h-5 w-5 text-indigo-400" /> Platform Activity
+          <Activity className="mr-2 h-5 w-5 text-indigo-600" /> Platform Activity
         </CardTitle>
-        <CardDescription className="text-gray-400">Recent actions and events on the platform</CardDescription>
+        <CardDescription>Recent actions and events on the platform</CardDescription>
       </CardHeader>
       <CardContent>
         <ActivityLog />
