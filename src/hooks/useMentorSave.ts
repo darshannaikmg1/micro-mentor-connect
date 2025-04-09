@@ -13,6 +13,11 @@ export interface UseMentorSaveResult {
   error: Error | null;
 }
 
+// Define the return type for our RPC functions
+interface GetSavedMentorsResponse {
+  mentor_id: string;
+}
+
 export const useMentorSave = (): UseMentorSaveResult => {
   const { user, isAuthenticated } = useAuth();
   const [savedMentors, setSavedMentors] = useState<string[]>([]);
@@ -28,8 +33,8 @@ export const useMentorSave = (): UseMentorSaveResult => {
 
     setIsLoading(true);
     try {
-      // Use the RPC function to get saved mentors
-      const { data, error } = await supabase.rpc<{ mentor_id: string }[]>('get_saved_mentors', {
+      // Use the RPC function to get saved mentors with proper typing
+      const { data, error } = await supabase.rpc<GetSavedMentorsResponse[]>('get_saved_mentors', {
         user_id_param: user.id
       });
 
@@ -38,7 +43,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
       }
 
       // Extract mentor_ids from the results
-      const mentorIds = data ? data.map((item: { mentor_id: string }) => item.mentor_id) : [];
+      const mentorIds = data ? data.map((item) => item.mentor_id) : [];
       setSavedMentors(mentorIds);
     } catch (err: any) {
       console.error('Error fetching saved mentors:', err);
@@ -65,7 +70,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
     }
 
     try {
-      // Use the RPC function to save a mentor
+      // Use the RPC function to save a mentor with proper typing
       const { error } = await supabase.rpc('save_mentor', {
         user_id_param: user.id,
         mentor_id_param: mentorId
@@ -90,7 +95,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
     }
 
     try {
-      // Use the RPC function to unsave a mentor
+      // Use the RPC function to unsave a mentor with proper typing
       const { error } = await supabase.rpc('unsave_mentor', {
         user_id_param: user.id,
         mentor_id_param: mentorId
