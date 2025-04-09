@@ -56,7 +56,7 @@ const FeaturedMentors = () => {
                 </p>
                 <div className="flex items-center mt-4 text-sm text-gray-500">
                   <Clock className="h-4 w-4 mr-1" />
-                  <span>${mentor.hourlyRate}/30 min</span>
+                  <span>${mentor.hourlyRate}/hr</span>
                 </div>
               </div>
               <CardFooter className="bg-gray-50 px-6 py-4">

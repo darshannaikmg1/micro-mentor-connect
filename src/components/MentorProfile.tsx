@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -32,7 +33,7 @@ const MentorProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { saveMentor, unsaveMentor, isMentorSaved } = useMentorSave();
+  const { isSaved, saveMentor, unsaveMentor } = useMentorSave();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -67,10 +68,10 @@ const MentorProfile = () => {
       return;
     }
     
-    if (isMentorSaved(mentor.id)) {
+    if (isSaved(mentor.id)) {
       await unsaveMentor(mentor.id);
     } else {
-      await saveMentor(mentor);
+      await saveMentor(mentor.id);
     }
   };
 

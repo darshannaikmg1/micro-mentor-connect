@@ -38,7 +38,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
       }
 
       // Extract mentor_ids from the results
-      const mentorIds = data.map((item: { mentor_id: string }) => item.mentor_id);
+      const mentorIds = data ? data.map((item: { mentor_id: string }) => item.mentor_id) : [];
       setSavedMentors(mentorIds);
     } catch (err: any) {
       console.error('Error fetching saved mentors:', err);

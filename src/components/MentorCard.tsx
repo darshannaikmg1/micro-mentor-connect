@@ -17,11 +17,11 @@ interface MentorCardProps {
 
 const MentorCard = ({ mentor }: MentorCardProps) => {
   const { isAuthenticated } = useAuth();
-  const { saveMentor, unsaveMentor, isMentorSaved } = useMentorSave();
+  const { isSaved, saveMentor, unsaveMentor } = useMentorSave();
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const saved = isMentorSaved(mentor.id);
+  const saved = isSaved(mentor.id);
 
   const handleSaveToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
     if (saved) {
       await unsaveMentor(mentor.id);
     } else {
-      await saveMentor(mentor);
+      await saveMentor(mentor.id);
     }
   };
 
