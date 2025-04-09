@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -121,7 +120,7 @@ const MentorProfile = () => {
     );
   }
 
-  const saved = isMentorSaved(mentor.id);
+  const saved = isSaved(mentor.id);
 
   return (
     <div className="container mx-auto py-8 px-4">
