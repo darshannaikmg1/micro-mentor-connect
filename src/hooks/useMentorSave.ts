@@ -18,6 +18,13 @@ interface GetSavedMentorsResponse {
   mentor_id: string;
 }
 
+// Define input parameter types for RPC functions
+interface SaveMentorParams {
+  user_id_param: string;
+  mentor_id_param: string;
+  saved_at_param?: string;
+}
+
 export const useMentorSave = (): UseMentorSaveResult => {
   const { user, isAuthenticated } = useAuth();
   const [savedMentors, setSavedMentors] = useState<string[]>([]);
@@ -34,9 +41,11 @@ export const useMentorSave = (): UseMentorSaveResult => {
     setIsLoading(true);
     try {
       // Use the RPC function to get saved mentors with proper typing
-      const { data, error } = await supabase.rpc<GetSavedMentorsResponse[]>('get_saved_mentors', {
-        user_id_param: user.id
-      });
+      // Provide both input and output types to rpc
+      const { data, error } = await supabase.rpc<GetSavedMentorsResponse[], { user_id_param: string }>(
+        'get_saved_mentors', 
+        { user_id_param: user.id }
+      );
 
       if (error) {
         throw error;
@@ -71,10 +80,13 @@ export const useMentorSave = (): UseMentorSaveResult => {
 
     try {
       // Use the RPC function to save a mentor with proper typing
-      const { error } = await supabase.rpc('save_mentor', {
-        user_id_param: user.id,
-        mentor_id_param: mentorId
-      });
+      const { error } = await supabase.rpc<null, SaveMentorParams>(
+        'save_mentor', 
+        {
+          user_id_param: user.id,
+          mentor_id_param: mentorId
+        }
+      );
 
       if (error) {
         throw error;
@@ -96,10 +108,13 @@ export const useMentorSave = (): UseMentorSaveResult => {
 
     try {
       // Use the RPC function to unsave a mentor with proper typing
-      const { error } = await supabase.rpc('unsave_mentor', {
-        user_id_param: user.id,
-        mentor_id_param: mentorId
-      });
+      const { error } = await supabase.rpc<null, { user_id_param: string; mentor_id_param: string }>(
+        'unsave_mentor', 
+        {
+          user_id_param: user.id,
+          mentor_id_param: mentorId
+        }
+      );
 
       if (error) {
         throw error;
