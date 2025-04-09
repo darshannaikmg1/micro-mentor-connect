@@ -29,9 +29,9 @@ export const useMentorSave = (): UseMentorSaveResult => {
     setIsLoading(true);
     try {
       // Use the RPC function to get saved mentors
-      const { data, error } = await supabase.rpc('get_saved_mentors', {
+      const { data, error } = await supabase.rpc<{ mentor_id: string }[]>('get_saved_mentors', {
         user_id_param: user.id
-      }) as { data: { mentor_id: string }[] | null, error: any };
+      });
 
       if (error) {
         throw error;
@@ -69,7 +69,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
       const { error } = await supabase.rpc('save_mentor', {
         user_id_param: user.id,
         mentor_id_param: mentorId
-      }) as { data: null, error: any };
+      });
 
       if (error) {
         throw error;
@@ -94,7 +94,7 @@ export const useMentorSave = (): UseMentorSaveResult => {
       const { error } = await supabase.rpc('unsave_mentor', {
         user_id_param: user.id,
         mentor_id_param: mentorId
-      }) as { data: null, error: any };
+      });
 
       if (error) {
         throw error;
