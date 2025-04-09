@@ -92,20 +92,20 @@ const ResetPasswordForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-gray-900 text-white border-gray-800">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Reset Password</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-gray-400">
           Create a new password for your account
         </CardDescription>
       </CardHeader>
       <CardContent>
         {isResetComplete ? (
           <div className="text-center space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               Your password has been successfully reset.
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               You will be redirected to the login page shortly.
             </p>
           </div>
@@ -113,7 +113,7 @@ const ResetPasswordForm = () => {
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password">New Password</Label>
+                <Label htmlFor="password" className="text-white">New Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -121,10 +121,11 @@ const ResetPasswordForm = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-white">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -132,11 +133,12 @@ const ResetPasswordForm = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-indigo-600 hover:bg-indigo-700"
                 disabled={isLoading}
               >
                 {isLoading ? "Resetting..." : "Reset Password"}
@@ -148,7 +150,7 @@ const ResetPasswordForm = () => {
       <CardFooter className="flex justify-center">
         <Button
           variant="link"
-          className="text-sm"
+          className="text-sm text-indigo-400"
           onClick={() => navigate("/login")}
         >
           Back to Login

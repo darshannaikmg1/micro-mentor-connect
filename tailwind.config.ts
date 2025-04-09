@@ -26,15 +26,15 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: '#4F46E5', // Updated to a richer indigo
+					DEFAULT: '#4F46E5', // Indigo color
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
-					DEFAULT: '#10B981', // Vibrant emerald green
+					DEFAULT: '#10B981', // Emerald green
 					foreground: 'hsl(var(--secondary-foreground))'
 				},
 				accent: {
-					DEFAULT: '#8B5CF6', // Rich purple
+					DEFAULT: '#8B5CF6', // Purple
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				destructive: {

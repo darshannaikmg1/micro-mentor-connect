@@ -92,25 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error };
       }
 
-      const { user: supabaseUser } = data;
-
-      if (supabaseUser) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', supabaseUser.id)
-          .single();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-          return { error: profileError };
-        }
-
-        // We don't need to setUser here as the onAuthStateChange listener will handle it
-        return {};
-      } else {
-        return { error: new Error("Login failed: User data is missing.") };
-      }
+      return {};
     } catch (error: any) {
       console.error("Login error:", error.message);
       return { error };
@@ -178,8 +160,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const forgotPassword = async (email: string) => {
     try {
+      // Use the full URL, not relative
+      const origin = window.location.origin;
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${origin}/reset-password`,
       });
       if (error) {
         throw error;

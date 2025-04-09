@@ -59,10 +59,10 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-gray-900 text-white border-gray-800">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-gray-400">
           Enter your credentials to access your account
         </CardDescription>
       </CardHeader>
@@ -70,7 +70,7 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-white">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -79,12 +79,13 @@ const LoginForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                <Label htmlFor="password" className="text-white">Password</Label>
+                <Link to="/forgot-password" className="text-sm text-indigo-400 hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -95,11 +96,12 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
               disabled={isLoading}
             >
               {isLoading ? "Logging in..." : "Login"}
@@ -108,9 +110,9 @@ const LoginForm = () => {
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-400">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-primary hover:underline">
+          <Link to="/signup" className="text-indigo-400 hover:underline">
             Sign up
           </Link>
         </div>

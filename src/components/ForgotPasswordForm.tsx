@@ -30,8 +30,10 @@ const ForgotPasswordForm = () => {
     setIsLoading(true);
     
     try {
+      // Use window.location.origin to get the full domain
+      const origin = window.location.origin;
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${origin}/reset-password`,
       });
       
       if (error) {
@@ -58,20 +60,20 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-gray-900 text-white border-gray-800">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Forgot Password</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-gray-400">
           Enter your email address and we'll send you a password reset link
         </CardDescription>
       </CardHeader>
       <CardContent>
         {isSubmitted ? (
           <div className="text-center space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               We've sent a password reset link to <strong>{email}</strong>.
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300">
               Please check your email and follow the instructions to reset your password.
             </p>
           </div>
@@ -79,7 +81,7 @@ const ForgotPasswordForm = () => {
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -88,11 +90,12 @@ const ForgotPasswordForm = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-indigo-600 hover:bg-indigo-700"
                 disabled={isLoading}
               >
                 {isLoading ? "Sending..." : "Send Reset Link"}
@@ -104,7 +107,7 @@ const ForgotPasswordForm = () => {
       <CardFooter className="flex justify-center">
         <Button
           variant="link"
-          className="text-sm"
+          className="text-sm text-indigo-400"
           onClick={() => navigate("/login")}
         >
           Back to Login
