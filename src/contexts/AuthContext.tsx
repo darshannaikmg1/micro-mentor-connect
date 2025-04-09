@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,20 +35,47 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const session = supabase.auth.getSession();
-
-    setUser(session?.data?.session?.user as User | null ?? null);
-    setIsAuthenticated(!!session?.data?.session?.user);
-
-    supabase.auth.onAuthStateChange((_event, session) => {
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        setUser(session.user as User);
+        const supabaseUser = session.user;
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email ?? '',
+          name: supabaseUser.user_metadata?.full_name || supabaseUser.email ?? '',
+          role: supabaseUser.user_metadata?.role || 'mentee',
+          image: supabaseUser.user_metadata?.avatar_url,
+          bio: supabaseUser.user_metadata?.bio || '',
+        });
         setIsAuthenticated(true);
       } else {
         setUser(null);
         setIsAuthenticated(false);
       }
     });
+
+    // Then check for existing session
+    const fetchSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        const supabaseUser = data.session.user;
+        setUser({
+          id: supabaseUser.id,
+          email: supabaseUser.email ?? '',
+          name: supabaseUser.user_metadata?.full_name || supabaseUser.email ?? '',
+          role: supabaseUser.user_metadata?.role || 'mentee',
+          image: supabaseUser.user_metadata?.avatar_url,
+          bio: supabaseUser.user_metadata?.bio || '',
+        });
+        setIsAuthenticated(true);
+      }
+    };
+
+    fetchSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -62,13 +90,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error };
       }
 
-      const { user } = data;
+      const { user: supabaseUser } = data;
 
-      if (user) {
+      if (supabaseUser) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', user.id)
+          .eq('id', supabaseUser.id)
           .single();
 
         if (profileError) {
@@ -76,17 +104,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           return { error: profileError };
         }
 
-        const role = profileData?.user_type || 'mentee'; // Default to 'mentee' if null
-
-        setUser({
-          id: user.id,
-          email: user.email ?? '',
-          name: profileData?.full_name || user.email ?? '',
-          role: role,
-          image: user.user_metadata.avatar_url,
-          bio: profileData?.bio || '',
-        });
-        setIsAuthenticated(true);
+        // We don't need to setUser here as the onAuthStateChange listener will handle it
         return {};
       } else {
         return { error: new Error("Login failed: User data is missing.") };
@@ -131,14 +149,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           return { error: profileError };
         }
 
-        setUser({
-          id: data.user.id,
-          email: data.user.email ?? '',
-          name: name,
-          role: 'mentee',
-          image: data.user.user_metadata.avatar_url,
-        });
-        setIsAuthenticated(true);
+        // We don't need to setUser here as the onAuthStateChange listener will handle it
         return {};
       } else {
         return { error: new Error("Signup failed: User data is missing.") };
@@ -196,7 +207,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const value = {
-    isAuthenticated: !!user,
+    isAuthenticated,
     user,
     login,
     signup,

@@ -5,6 +5,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Mentor } from '@/data/mentorData';
 
+interface SavedMentor {
+  user_id: string;
+  mentor_id: string;
+  saved_at?: string;
+}
+
 export const useMentorSave = () => {
   const { user } = useAuth();
   const [savedMentors, setSavedMentors] = useState<string[]>([]);
@@ -21,21 +27,37 @@ export const useMentorSave = () => {
 
       try {
         setIsLoading(true);
-        // Using a raw query instead of the typed query builder to avoid type issues
-        // with the saved_mentors table that wasn't in the generated types
+        // Using a raw query since saved_mentors isn't in the generated types
         const { data, error } = await supabase
-          .from('saved_mentors')
-          .select('mentor_id')
-          .eq('user_id', user.id);
+          .rpc('get_saved_mentors', { user_id_param: user.id })
+          .select('mentor_id');
 
         if (error) {
           throw error;
         }
 
-        // The data will be an array of objects with mentor_id property
-        setSavedMentors(data ? data.map(item => item.mentor_id) : []);
+        // Handle the response
+        if (data && Array.isArray(data)) {
+          setSavedMentors(data.map(item => item.mentor_id));
+        } else {
+          setSavedMentors([]);
+        }
       } catch (error) {
         console.error('Error fetching saved mentors:', error);
+        // Using the fallback approach with a direct SQL query
+        try {
+          const { data, error: sqlError } = await supabase
+            .from('saved_mentors')
+            .select('mentor_id')
+            .eq('user_id', user.id);
+            
+          if (sqlError) throw sqlError;
+          
+          setSavedMentors(data ? data.map(item => item.mentor_id) : []);
+        } catch (sqlError) {
+          console.error('Fallback error fetching saved mentors:', sqlError);
+          setSavedMentors([]);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -56,17 +78,25 @@ export const useMentorSave = () => {
 
     try {
       setIsLoading(true);
-      // Using a raw query to insert into saved_mentors
+      // Using a direct insert query for saved_mentors table
       const { error } = await supabase
-        .from('saved_mentors')
-        .insert({
-          user_id: user.id,
-          mentor_id: mentor.id,
-          saved_at: new Date().toISOString()
+        .rpc('save_mentor', { 
+          user_id_param: user.id, 
+          mentor_id_param: mentor.id,
+          saved_at_param: new Date().toISOString()
         });
 
       if (error) {
-        throw error;
+        // Fallback to direct insert if RPC call fails
+        const { error: insertError } = await supabase
+          .from('saved_mentors')
+          .insert({
+            user_id: user.id,
+            mentor_id: mentor.id,
+            saved_at: new Date().toISOString()
+          });
+          
+        if (insertError) throw insertError;
       }
 
       setSavedMentors(prev => [...prev, mentor.id]);
@@ -97,15 +127,22 @@ export const useMentorSave = () => {
 
     try {
       setIsLoading(true);
-      // Using a raw query to delete from saved_mentors
+      // Using a direct delete query for saved_mentors table
       const { error } = await supabase
-        .from('saved_mentors')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('mentor_id', mentorId);
+        .rpc('unsave_mentor', { 
+          user_id_param: user.id, 
+          mentor_id_param: mentorId 
+        });
 
       if (error) {
-        throw error;
+        // Fallback to direct delete if RPC call fails
+        const { error: deleteError } = await supabase
+          .from('saved_mentors')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('mentor_id', mentorId);
+          
+        if (deleteError) throw deleteError;
       }
 
       setSavedMentors(prev => prev.filter(id => id !== mentorId));

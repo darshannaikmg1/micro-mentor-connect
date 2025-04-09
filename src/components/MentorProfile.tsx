@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -42,7 +41,6 @@ const MentorProfile = () => {
       return;
     }
 
-    // In a real application, this would be an API call
     try {
       const mentorData = getMentorById(id);
       if (mentorData) {
@@ -90,7 +88,6 @@ const MentorProfile = () => {
       return;
     }
     
-    // In a real application, this would open a chat or messaging interface
     toast({
       title: "Message feature",
       description: "The messaging feature would open here.",
@@ -294,27 +291,31 @@ const MentorProfile = () => {
                 </div>
               </div>
 
-              {mentor.reviews?.map((review, i) => (
-                <div key={i} className="mb-6 pb-6 border-b last:border-b-0 last:pb-0">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center">
-                      <Avatar className="h-10 w-10 mr-3">
-                        <AvatarImage src={review.avatar} alt={review.name} />
-                        <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{review.name}</p>
-                        <p className="text-sm text-gray-500">{review.date}</p>
+              {mentor.reviews && mentor.reviews.length > 0 ? (
+                mentor.reviews.map((review, i) => (
+                  <div key={i} className="mb-6 pb-6 border-b last:border-b-0 last:pb-0">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center">
+                        <Avatar className="h-10 w-10 mr-3">
+                          <AvatarImage src={review.avatar} alt={review.name} />
+                          <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{review.name}</p>
+                          <p className="text-sm text-gray-500">{review.date}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                        <span>{review.rating}</span>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                      <span>{review.rating}</span>
-                    </div>
+                    <p className="text-gray-700">{review.comment}</p>
                   </div>
-                  <p className="text-gray-700">{review.comment}</p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">No reviews yet</p>
+              )}
             </TabsContent>
           </Tabs>
         </div>

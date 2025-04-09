@@ -23,7 +23,8 @@ const SignupForm = () => {
     setIsLoading(true);
 
     try {
-      await signup(email, password, name, role);
+      // Only pass 3 arguments as expected by the signup method
+      await signup(email, password, name);
       toast({
         title: "Account created",
         description: "Welcome to MicroMentor!",

@@ -6,7 +6,6 @@ export interface Mentor {
   bio: string;
   expertise: string[];
   rating: number;
-  reviews: number;
   reviewCount: number;
   hourlyRate: number;
   avatar: string;
@@ -41,7 +40,7 @@ export interface Mentor {
   };
 }
 
-const mentors: Mentor[] = [
+const mentorList: Mentor[] = [
   {
     id: "1",
     name: "Alex Johnson",
@@ -50,7 +49,6 @@ const mentors: Mentor[] = [
     bio: "I help developers improve their coding skills and prepare for technical interviews. With 8 years at Google, I've interviewed hundreds of candidates and can help you level up your skills.",
     expertise: ["React", "JavaScript", "System Design", "Interview Prep"],
     rating: 4.9,
-    reviews: 124,
     reviewCount: 124,
     hourlyRate: 75,
     avatar: "https://i.pravatar.cc/300?img=1",
@@ -116,7 +114,6 @@ const mentors: Mentor[] = [
     bio: "Passionate about helping aspiring product managers break into the field. I specialize in product strategy, user research, and roadmap planning.",
     expertise: ["Product Strategy", "User Research", "Roadmapping", "PM Interviews"],
     rating: 4.8,
-    reviews: 98,
     reviewCount: 98,
     hourlyRate: 85,
     avatar: "https://i.pravatar.cc/300?img=5",
@@ -175,7 +172,6 @@ const mentors: Mentor[] = [
     bio: "I help designers and design enthusiasts improve their portfolio and design thinking skills. Learn how to create beautiful, user-centric designs.",
     expertise: ["UI Design", "UX Research", "Design Systems", "Figma"],
     rating: 4.7,
-    reviews: 87,
     reviewCount: 87,
     hourlyRate: 65,
     avatar: "https://i.pravatar.cc/300?img=3",
@@ -222,7 +218,6 @@ const mentors: Mentor[] = [
     bio: "Specialized in digital marketing strategies, brand development, and marketing analytics. I can help you grow your audience and improve conversion rates.",
     expertise: ["Digital Marketing", "SEO", "Content Strategy", "Analytics"],
     rating: 4.9,
-    reviews: 112,
     reviewCount: 112,
     hourlyRate: 90,
     avatar: "https://i.pravatar.cc/300?img=10",
@@ -269,7 +264,6 @@ const mentors: Mentor[] = [
     bio: "I help professionals break into data science and AI. Learn practical machine learning, data visualization, and how to transition into a data role.",
     expertise: ["Machine Learning", "Python", "SQL", "Data Visualization"],
     rating: 4.6,
-    reviews: 75,
     reviewCount: 75,
     hourlyRate: 80,
     avatar: "https://i.pravatar.cc/300?img=7",
@@ -316,7 +310,6 @@ const mentors: Mentor[] = [
     bio: "Former founder with YC experience. I help early-stage startups with product-market fit, fundraising, and growth strategy.",
     expertise: ["Fundraising", "Pitch Decks", "Business Models", "Growth"],
     rating: 4.9,
-    reviews: 67,
     reviewCount: 67,
     hourlyRate: 120,
     avatar: "https://i.pravatar.cc/300?img=9",
@@ -359,13 +352,13 @@ const mentors: Mentor[] = [
 ];
 
 export const getMentors = () => {
-  return mentors;
+  return mentorList;
 };
 
 export const getMentorById = (id: string) => {
-  return mentors.find((mentor) => mentor.id === id);
+  return mentorList.find((mentor) => mentor.id === id);
 };
 
 export const getMentorsByExpertise = (expertise: string) => {
-  return mentors.filter((mentor) => mentor.expertise.includes(expertise));
+  return mentorList.filter((mentor) => mentor.expertise.includes(expertise));
 };

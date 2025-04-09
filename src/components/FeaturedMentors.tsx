@@ -4,11 +4,11 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Clock } from "lucide-react";
-import { mentors } from "@/data/mentorData";
+import { getMentors } from "@/data/mentorData";
 
 const FeaturedMentors = () => {
   // Display only first 3 mentors for the featured section
-  const featuredMentors = mentors.slice(0, 3);
+  const featuredMentors = getMentors().slice(0, 3);
 
   return (
     <section className="py-16 bg-gray-50">
