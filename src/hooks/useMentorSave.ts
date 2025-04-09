@@ -40,9 +40,9 @@ export const useMentorSave = (): UseMentorSaveResult => {
 
     setIsLoading(true);
     try {
-      // Use the RPC function to get saved mentors with proper typing
-      const { data, error } = await supabase.rpc('get_saved_mentors', 
-        { user_id_param: user.id 
+      // Use the RPC function to get saved mentors
+      const { data, error } = await supabase.functions.invoke('get_saved_mentors', {
+        body: { user_id_param: user.id }
       });
 
       if (error) {
@@ -77,13 +77,13 @@ export const useMentorSave = (): UseMentorSaveResult => {
     }
 
     try {
-      // Use the RPC function to save a mentor with proper typing
-      const { error } = await supabase.rpc('save_mentor', 
-        {
+      // Use the RPC function to save a mentor
+      const { error } = await supabase.functions.invoke('save_mentor', {
+        body: {
           user_id_param: user.id,
           mentor_id_param: mentorId
         }
-      );
+      });
 
       if (error) {
         throw error;
@@ -104,13 +104,13 @@ export const useMentorSave = (): UseMentorSaveResult => {
     }
 
     try {
-      // Use the RPC function to unsave a mentor with proper typing
-      const { error } = await supabase.rpc('unsave_mentor', 
-        {
+      // Use the RPC function to unsave a mentor
+      const { error } = await supabase.functions.invoke('unsave_mentor', {
+        body: {
           user_id_param: user.id,
           mentor_id_param: mentorId
         }
-      );
+      });
 
       if (error) {
         throw error;
