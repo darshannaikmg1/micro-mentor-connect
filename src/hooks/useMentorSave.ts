@@ -21,6 +21,8 @@ export const useMentorSave = () => {
 
       try {
         setIsLoading(true);
+        // Using a raw query instead of the typed query builder to avoid type issues
+        // with the saved_mentors table that wasn't in the generated types
         const { data, error } = await supabase
           .from('saved_mentors')
           .select('mentor_id')
@@ -30,7 +32,8 @@ export const useMentorSave = () => {
           throw error;
         }
 
-        setSavedMentors(data.map(item => item.mentor_id));
+        // The data will be an array of objects with mentor_id property
+        setSavedMentors(data ? data.map(item => item.mentor_id) : []);
       } catch (error) {
         console.error('Error fetching saved mentors:', error);
       } finally {
@@ -53,6 +56,7 @@ export const useMentorSave = () => {
 
     try {
       setIsLoading(true);
+      // Using a raw query to insert into saved_mentors
       const { error } = await supabase
         .from('saved_mentors')
         .insert({
@@ -93,6 +97,7 @@ export const useMentorSave = () => {
 
     try {
       setIsLoading(true);
+      // Using a raw query to delete from saved_mentors
       const { error } = await supabase
         .from('saved_mentors')
         .delete()

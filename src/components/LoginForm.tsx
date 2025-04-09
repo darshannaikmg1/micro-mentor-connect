@@ -37,10 +37,10 @@ const LoginForm = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await login(email, password);
+      const result = await login(email, password);
       
-      if (error) {
-        throw error;
+      if (result && result.error) {
+        throw result.error;
       }
       
       // Redirect to the redirectUrl or dashboard

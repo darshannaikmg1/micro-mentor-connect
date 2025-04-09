@@ -80,6 +80,27 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_mentors: {
+        Row: {
+          id: string
+          mentor_id: string
+          saved_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          mentor_id: string
+          saved_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          mentor_id?: string
+          saved_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       sessions: {
         Row: {
           category_id: string | null
