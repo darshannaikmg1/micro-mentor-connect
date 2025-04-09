@@ -37,7 +37,7 @@ const FeaturedMentors = () => {
                     <div className="flex items-center mt-1">
                       <Star className="h-4 w-4 text-yellow-400" />
                       <span className="ml-1 text-sm text-gray-600">
-                        {mentor.rating} ({mentor.reviews} reviews)
+                        {mentor.rating} ({mentor.reviewCount} reviews)
                       </span>
                     </div>
                   </div>

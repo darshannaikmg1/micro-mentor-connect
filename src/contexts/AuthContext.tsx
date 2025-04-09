@@ -42,7 +42,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email ?? '',
-          name: supabaseUser.user_metadata?.full_name || supabaseUser.email ?? '',
+          // Fix operator precedence with parentheses
+          name: supabaseUser.user_metadata?.full_name || (supabaseUser.email ?? ''),
           role: supabaseUser.user_metadata?.role || 'mentee',
           image: supabaseUser.user_metadata?.avatar_url,
           bio: supabaseUser.user_metadata?.bio || '',
@@ -62,7 +63,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email ?? '',
-          name: supabaseUser.user_metadata?.full_name || supabaseUser.email ?? '',
+          // Fix operator precedence with parentheses
+          name: supabaseUser.user_metadata?.full_name || (supabaseUser.email ?? ''),
           role: supabaseUser.user_metadata?.role || 'mentee',
           image: supabaseUser.user_metadata?.avatar_url,
           bio: supabaseUser.user_metadata?.bio || '',
