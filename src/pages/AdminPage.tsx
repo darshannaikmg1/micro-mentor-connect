@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -18,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface UserProfile {
   id: string;
   full_name: string;
-  email: string;
+  email?: string;
   user_type: 'mentor' | 'mentee' | 'admin';
   created_at: string;
   expertise?: string[];
@@ -83,12 +82,9 @@ const AdminPage = () => {
 
         if (sessionsError) throw sessionsError;
 
-        // Get emails for users
-        const userIds = [...mentorsData, ...menteesData].map(profile => profile.id);
-        
         // In a real app, you'd need a more efficient way to get emails
-        // This is just for demonstration since we can't query auth.users directly
-        
+        // For now, we'll set the mentors and mentees with the data we have
+        // and handle the missing email field in the UI
         setMentors(mentorsData as UserProfile[]);
         setMentees(menteesData as UserProfile[]);
         setSessions(sessionsData || []);

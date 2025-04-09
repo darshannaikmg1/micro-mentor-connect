@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
@@ -26,6 +25,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Database } from "@/integrations/supabase/types";
+
+type SessionType = Database["public"]["Enums"]["session_type"];
+type SessionStatus = Database["public"]["Enums"]["session_status"];
 
 interface BookSessionModalProps {
   mentorId: string;
@@ -92,13 +95,13 @@ const BookSessionModal = ({ mentorId, mentorName, hourlyRate }: BookSessionModal
         duration: parseInt(duration),
         price: (hourlyRate * parseInt(duration)) / 60,
         notes: notes,
-        status: 'pending',
-        session_type: 'video'
+        status: 'pending' as SessionStatus,
+        session_type: 'video' as SessionType
       };
       
       const { data, error } = await supabase
         .from('sessions')
-        .insert([sessionData])
+        .insert(sessionData)
         .select();
       
       if (error) throw error;
